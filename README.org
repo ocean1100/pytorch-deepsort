@@ -1,0 +1,263 @@
+#+TITLE:         README ~Deep_sort~ implementation fork
+#+AUTHOR:        Sergio-Feliciano Mendoza-Barrera
+#+DRAWERS:       sfmb
+#+EMAIL:         sergio@executive.com.br
+#+DATE:          08/03/2018
+#+DESCRIPTION:   Deep Learning Specialization series course
+#+KEYWORDS:      R, data science, emacs, ESS, org-mode, deep learning
+#+LANGUAGE:      en
+#+OPTIONS:       H:10 num:t toc:nil \n:nil @:t ::t |:t ^:{} -:t f:t *:t <:t d:HIDDEN
+#+OPTIONS:       TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+OPTIONS:       LaTeX:dvipng
+#+INFOJS_OPT:    view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:
+#+LINK_HOME:
+#+XSLT:
+#+STYLE: <link rel="stylesheet" type="text/css" href="dft.css"/>
+
+#+LaTeX_CLASS: IEEEtran
+#+LATEX_CLASS_OPTIONS: [letterpaper, 9pt, onecolumn, twoside, technote, final]
+#+LATEX_HEADER: \usepackage[USenglish]{babel}
+#+LATEX_HEADER: \hyphenation{do-cu-ment}
+#+LATEX_HEADER: \usepackage{minted}
+#+LATEX_HEADER: \usepackage{makeidx}
+#+LATEX_HEADER: \usepackage[T1]{fontenc}
+#+LATEX_HEADER: \usepackage[ttdefault=true]{AnonymousPro}
+#+LATEX_HEADER: \renewcommand*\familydefault{\ttdefault} %% Only if the base font of the document is to be typewriter style
+#+LATEX_HEADER: \usepackage[libertine,bigdelims]{newtxmath}
+#+LATEX_HEADER: \usepackage[cal=boondoxo,bb=boondox,frak=boondox]{mathalfa}
+#+LATEX_HEADER: \useosf % change normal text to use proportional oldstyle figures
+
+#+LATEX_HEADER: \markboth{README ~Deep_sort~ implementation fork}%
+#+LATEX_HEADER: {Sergio-Feliciano Mendoza-Barrera}
+
+#+LATEX_HEADER: \newcommand{\degC}{$^\circ$C{}}
+
+#+STYLE: <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> </script>
+
+#+ATTR_HTML: width="500px"
+
+# -*- mode: org; -*-
+#+OPTIONS:   toc:2
+
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="http://www.pirilampo.org/styles/readtheorg/css/htmlize.css"/>
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="http://www.pirilampo.org/styles/readtheorg/css/readtheorg.css"/>
+#+HTML_HEAD: <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+#+HTML_HEAD: <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+#+HTML_HEAD: <script type="text/javascript" src="http://www.pirilampo.org/styles/lib/js/jquery.stickytableheaders.js"></script>
+#+HTML_HEAD: <script type="text/javascript" src="http://www.pirilampo.org/styles/readtheorg/js/readtheorg.js"></script>
+
+#+BEGIN_ABSTRACT
+*Important:* Forked from https://github.com/bendidi/Tracking-with-darkflow
+
+The purpose of this little project is to add object tracking to yolov2
+and achieve real-time multiple object tracking.
+
+The idea is contained on this [[file:~/src/dod/dod_people_tracking/docs/1703.07402.pdf][paper]].
+#+END_ABSTRACT
+
+* README
+
+*Important:* Forked from https://github.com/bendidi/Tracking-with-darkflow
+
+** Intro
+   :PROPERTIES:
+   :CUSTOM_ID: intro
+   :END:
+
+The purpose of this little project is to add object tracking to YOLOv2
+and achieve real-time multiple object tracking.
+
+The current architecture is set to only track one type of objects, but
+it should be easy to generalise over all objects.
+
+Currently support people tracking (as the provided weights for
+~deep_sort~ were trained on people tracking)
+
+** Dependencies
+   :PROPERTIES:
+   :CUSTOM_ID: dependencies
+   :END:
+
+#+BEGIN_EXAMPLE
+  python
+  numpy
+  opencv 3
+  tensorflow 1.0
+  Cython.
+  sklean.
+#+END_EXAMPLE
+
+for using sort :
+
+[[http://scikit-learn.org/stable/][~scikit-learn~]]
+[[http://scikit-image.org/download][~scikit-image~]]
+[[https://github.com/rlabbe/filterpy][~FilterPy~]]
+
+*** Setup
+    :PROPERTIES:
+    :CUSTOM_ID: setup
+    :END:
+
+1. Clone this repository:
+   ~git clone https://github.com/bendidi/Tracking-with-darkflow.git~
+
+2. Initialize all submodules:
+   ~git submodule update --init --recursive~
+
+3. Go to darkflow directory and do in place build:
+   ~python3 setup.py build_ext --inplace~
+
+** Getting started
+   :PROPERTIES:
+   :CUSTOM_ID: getting-started
+   :END:
+
+Download the weights :
+
+Read more about YOLO (in darknet) and download weight files [[http://pjreddie.com/darknet/yolo/][here]], in
+case the weight file cannot be found, [[https://github.com/thtrieu][thtrieu]] has uploaded some of his
+[[https://drive.google.com/drive/folders/0B1tW_VtY7onidEwyQ2FtQVplWEU][here]], which include ~yolo-full~ and ~yolo-tiny~ of v1.0,
+~tiny-yolo-v1.1~ of v1.1 and ~yolo~, ~tiny-yolo-voc~ of v2.
+
+The artchitecture I used/tested in this project is ~cfg/yolo.cfg~ with
+the weights ~bin/yolo.weights~.
+
+Next you need to download the ~deep_sort~ weights [[https://owncloud.uni-koblenz.de/owncloud/s/f9JB0Jr7f3zzqs8?path=%2Fresources][here]] (networks
+folder), provided by [[https://github.com/nwojke][nwojke]] extract the folder and copy it to
+~deep_sort/resources~
+
+Edit Flags in ~run.py~ following your configuration:
+
+-  ~demo~ : path to video file to use, set to "camera" if you wish to
+   use your camera
+
+-  ~model~ : what model configuration to use for YOLO, you can get more
+   information and .cfg files in [[http://pjreddie.com/darknet/yolo/][here]](put them in ~darkflow/cfg/~
+  folder)
+
+-  ~load~ : The corresponding weights to use with the chosen model (put
+   them in darkflow/bin/) more info in [[http://pjreddie.com/darknet/yolo/][here]]
+
+-  ~threshold~ : the confidance threshold of the YOLO detections
+
+-  ~gpu~ : How much GPU to use, 0 means use cpu
+
+-  ~track~ : to activate tracking or not
+
+-  ~trackObj~: which objects to track as a list (notice that
+  ~deep_sort~'s encoder was only trained on people , so you need train
+  your own encoder, more information in [[https://github.com/nwojke/deep_sort/issues/7][here]])
+
+-  ~saveVideo~ : whether to save video or not
+
+-  ~BK_MOG~ : add opencv's MOG background subtraction module, only
+  useful when YOLO can't detect people in a video (low quality, ...)
+  use it to detect boxes around moving objects
+
+-  ~tracker~ : which tracker to use : "deep_sort" or "sort"
+
+   #+BEGIN_EXAMPLE text
+     NOTE: "deep_sort" only supports people tracking as it was only trained to track people(the code for training is not yet published)
+
+     TODO: add support for GOTURN tracker(tensorflow implementation)
+
+     TODO: add support for opencv trackers (MIL,KCF,TLD,MEDIANFLOW)
+   #+END_EXAMPLE
+
+-  ~skip~: skip frames to increase fps, might decrease accuracy!
+
+-  ~csv~ : save csv file of detections in the format
+  (~frame_id~, ~object_id~, ~x~, ~y~ ,~w~, ~h~)
+
+-  ~display~ : display video while processing or not
+
+Next you just have to run ~python run.py~, and enjoy!
+
+** Some numbers :
+   :PROPERTIES:
+   :CUSTOM_ID: some-numbers
+   :END:
+
+speed using ~yolo.cfg~:
+
+#+BEGIN_EXAMPLE
+  YOLO with track Flag set to False : 30fps
+  YOLO with track Flag set to True (deep_sort) : 14 fps
+  YOLO with track and background subtraction Flags set to Ture : 10.5 fps
+#+END_EXAMPLE
+
+Tests done on ~(1024, 1280, 3)~ resolution video on Nvidia GTX 1080
+
+skipping up to 3 frames allows for more speed up while keeping accuracy
+of tracking`
+
+** Disclamer :
+   :PROPERTIES:
+   :CUSTOM_ID: disclamer
+   :END:
+
+this project is using code forked from:
+
+[[https://github.com/thtrieu/darkflow][thtrieu/darkflow]]: for the real-time object detections and
+classifications.
+
+[[https://github.com/nwojke/deep_sort][nwojke/deep_sort]]: for Simple Online Realtime Tracking with a Deep
+Association Metric.
+
+Please follow the links to get an understanding of all the features of
+each project.
+
+** Citation
+   :PROPERTIES:
+   :CUSTOM_ID: citation
+   :END:
+
+*** YOLOv2 :
+    :PROPERTIES:
+    :CUSTOM_ID: yolov2
+    :END:
+
+#+BEGIN_EXAMPLE
+    @article{redmon2016yolo9000,
+      title={YOLO9000: Better, Faster, Stronger},
+      author={Redmon, Joseph and Farhadi, Ali},
+      journal={arXiv preprint arXiv:1612.08242},
+      year={2016}
+    }
+#+END_EXAMPLE
+
+*** ~deep_sort~:
+    :PROPERTIES:
+    :CUSTOM_ID: deep_sort
+    :END:
+
+#+BEGIN_EXAMPLE
+    @article{Wojke2017simple,
+      title={Simple Online and Realtime Tracking with a Deep Association Metric},
+      author={Wojke, Nicolai and Bewley, Alex and Paulus, Dietrich},
+      journal={arXiv preprint arXiv:1703.07402},
+      year={2017}
+    }
+#+END_EXAMPLE
+
+*** sort :
+    :PROPERTIES:
+    :CUSTOM_ID: sort
+    :END:
+
+#+BEGIN_EXAMPLE
+    @inproceedings{Bewley2016_sort,
+      author={Bewley, Alex and Ge, Zongyuan and Ott, Lionel and Ramos, Fabio and Upcroft, Ben},
+      booktitle={2016 IEEE International Conference on Image Processing (ICIP)},
+      title={Simple online and realtime tracking},
+      year={2016},
+      pages={3464-3468},
+      keywords={Benchmark testing;Complexity theory;Detectors;Kalman filters;Target tracking;Visualization;Computer Vision;Data Association;Detection;Multiple Object Tracking},
+      doi={10.1109/ICIP.2016.7533003}
+    }
+#+END_EXAMPLE
+
+EOF

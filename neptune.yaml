@@ -1,0 +1,14 @@
+exclude:
+  - deep_sort
+  - darkflow
+  - sort
+  - offline_job.log
+  - .git
+  - .idea
+  - .ipynb_checkpoints
+  - auto
+  - output
+  - auto
+  - .avi
+  - .csv 
+

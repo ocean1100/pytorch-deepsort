@@ -1,0 +1,232 @@
+% Created 2018-03-11 Sun 14:01
+% Intended LaTeX compiler: pdflatex
+\documentclass[letterpaper, 9pt, onecolumn, twoside, technote, final]{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage{minted}
+\usepackage[USenglish, english]{babel}
+\hyphenation{do-cu-ment}
+\usepackage{minted}
+\usepackage{makeidx}
+\usepackage[T1]{fontenc}
+\usepackage[ttdefault=true]{AnonymousPro}
+\renewcommand*\familydefault{\ttdefault} %% Only if the base font of the document is to be typewriter style
+\usepackage[libertine,bigdelims]{newtxmath}
+\usepackage[cal=boondoxo,bb=boondox,frak=boondox]{mathalfa}
+\useosf % change normal text to use proportional oldstyle figures
+\markboth{README ~Deep_sort~ implementation fork}%
+{Sergio-Feliciano Mendoza-Barrera}
+\newcommand{\degC}{$^\circ$C{}}
+\author{Sergio-Feliciano Mendoza-Barrera}
+\date{08/03/2018}
+\title{README \texttt{Deep\_sort} implementation fork}
+\hypersetup{
+ pdfauthor={Sergio-Feliciano Mendoza-Barrera},
+ pdftitle={README \texttt{Deep\_sort} implementation fork},
+ pdfkeywords={R, data science, emacs, ESS, org-mode, deep learning},
+ pdfsubject={Deep Learning Specialization series course},
+ pdfcreator={Emacs 27.0.50 (Org mode 9.1.7)},
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\setcounter{tocdepth}{2}
+\tableofcontents
+
+\begin{ABSTRACT}
+\textbf{Important:} Forked from \url{https://github.com/bendidi/Tracking-with-darkflow}
+
+The purpose of this little project is to add object tracking to yolov2
+and achieve real-time multiple object tracking.
+
+The idea is contained on this \href{file:///home/jaalkab/src/dod/dod\_people\_tracking/docs/1703.07402.pdf}{paper}.
+\end{ABSTRACT}
+
+\section{README}
+\label{sec:org7a186d2}
+
+\subsection{Intro}
+\label{sec:orgf815d98}
+The purpose of this little project is to add object tracking to YOLOv2
+and achieve real-time multiple object tracking.
+
+The current architecture is set to only track one type of objects, but
+it should be easy to generalise over all objects.
+
+Currently support people tracking (as the provided weights for
+\texttt{deep\_sort} were trained on people tracking)
+
+\subsection{Dependencies}
+\label{sec:orgada548f}
+\begin{verbatim}
+python
+numpy
+opencv 3
+tensorflow 1.0
+Cython.
+sklean.
+\end{verbatim}
+
+for using sort :
+
+\href{http://scikit-learn.org/stable/}{\texttt{scikit-learn}}
+\href{http://scikit-image.org/download}{\texttt{scikit-image}}
+\href{https://github.com/rlabbe/filterpy}{\texttt{FilterPy}}
+
+\subsubsection{Setup}
+\label{sec:org21ca4bb}
+\begin{enumerate}
+\item Clone this repository:
+\texttt{git clone https://github.com/bendidi/Tracking-with-darkflow.git}
+
+\item Initialize all submodules:
+\texttt{git submodule update -{}-init -{}-recursive}
+
+\item Go to darkflow directory and do in place build:
+\texttt{python3 setup.py build\_ext -{}-inplace}
+\end{enumerate}
+
+\subsection{Getting started}
+\label{sec:org41a996b}
+Download the weights :
+
+Read more about YOLO (in darknet) and download weight files \href{http://pjreddie.com/darknet/yolo/}{here}, in
+case the weight file cannot be found, \href{https://github.com/thtrieu}{thtrieu} has uploaded some of his
+\href{https://drive.google.com/drive/folders/0B1tW\_VtY7onidEwyQ2FtQVplWEU}{here}, which include \texttt{yolo-full} and \texttt{yolo-tiny} of v1.0,
+\texttt{tiny-yolo-v1.1} of v1.1 and \texttt{yolo}, \texttt{tiny-yolo-voc} of v2.
+
+The artchitecture I used/tested in this project is \texttt{cfg/yolo.cfg} with
+the weights \texttt{bin/yolo.weights}.
+
+Next you need to download the \texttt{deep\_sort} weights \href{https://owncloud.uni-koblenz.de/owncloud/s/f9JB0Jr7f3zzqs8?path=\%2Fresources}{here} (networks
+folder), provided by \href{https://github.com/nwojke}{nwojke} extract the folder and copy it to
+\texttt{deep\_sort/resources}
+
+Edit Flags in \texttt{run.py} following your configuration:
+
+\begin{itemize}
+\item \texttt{demo} : path to video file to use, set to "camera" if you wish to
+use your camera
+
+\item \texttt{model} : what model configuration to use for YOLO, you can get more
+ information and .cfg files in \href{http://pjreddie.com/darknet/yolo/}{here}(put them in \texttt{darkflow/cfg/}
+folder)
+
+\item \texttt{load} : The corresponding weights to use with the chosen model (put
+them in darkflow/bin/) more info in \href{http://pjreddie.com/darknet/yolo/}{here}
+
+\item \texttt{threshold} : the confidance threshold of the YOLO detections
+
+\item \texttt{gpu} : How much GPU to use, 0 means use cpu
+
+\item \texttt{track} : to activate tracking or not
+
+\item \texttt{trackObj}: which objects to track as a list (notice that
+\texttt{deep\_sort}'s encoder was only trained on people , so you need train
+your own encoder, more information in \href{https://github.com/nwojke/deep\_sort/issues/7}{here})
+
+\item \texttt{saveVideo} : whether to save video or not
+
+\item \texttt{BK\_MOG} : add opencv's MOG background subtraction module, only
+useful when YOLO can't detect people in a video (low quality, \ldots{})
+use it to detect boxes around moving objects
+
+\item \texttt{tracker} : which tracker to use : "deep\_sort" or "sort"
+
+\begin{verbatim}
+NOTE: "deep_sort" only supports people tracking as it was only trained to track people(the code for training is not yet published)
+
+TODO: add support for GOTURN tracker(tensorflow implementation)
+
+TODO: add support for opencv trackers (MIL,KCF,TLD,MEDIANFLOW)
+\end{verbatim}
+
+\item \texttt{skip}: skip frames to increase fps, might decrease accuracy!
+
+\item \texttt{csv} : save csv file of detections in the format
+(\texttt{frame\_id}, \texttt{object\_id}, \texttt{x}, \texttt{y} ,\textasciitilde{}w\textasciitilde{}, \texttt{h})
+
+\item \texttt{display} : display video while processing or not
+\end{itemize}
+
+Next you just have to run \texttt{python run.py}, and enjoy!
+
+\subsection{Some numbers :}
+\label{sec:orgbf356cd}
+speed using \texttt{yolo.cfg}:
+
+\begin{verbatim}
+YOLO with track Flag set to False : 30fps
+YOLO with track Flag set to True (deep_sort) : 14 fps
+YOLO with track and background subtraction Flags set to Ture : 10.5 fps
+\end{verbatim}
+
+Tests done on \texttt{(1024, 1280, 3)} resolution video on Nvidia GTX 1080
+
+skipping up to 3 frames allows for more speed up while keeping accuracy
+of tracking`
+
+\subsection{Disclamer :}
+\label{sec:orgc636506}
+this project is using code forked from:
+
+\href{https://github.com/thtrieu/darkflow}{thtrieu/darkflow}: for the real-time object detections and
+classifications.
+
+\href{https://github.com/nwojke/deep\_sort}{nwojke/deep\_sort}: for Simple Online Realtime Tracking with a Deep
+Association Metric.
+
+Please follow the links to get an understanding of all the features of
+each project.
+
+\subsection{Citation}
+\label{sec:org6f99117}
+\subsubsection{YOLOv2 :}
+\label{sec:org228dfd3}
+\begin{verbatim}
+@article{redmon2016yolo9000,
+  title={YOLO9000: Better, Faster, Stronger},
+  author={Redmon, Joseph and Farhadi, Ali},
+  journal={arXiv preprint arXiv:1612.08242},
+  year={2016}
+}
+\end{verbatim}
+
+\subsubsection{\texttt{deep\_sort}:}
+\label{sec:org079ecb8}
+\begin{verbatim}
+@article{Wojke2017simple,
+  title={Simple Online and Realtime Tracking with a Deep Association Metric},
+  author={Wojke, Nicolai and Bewley, Alex and Paulus, Dietrich},
+  journal={arXiv preprint arXiv:1703.07402},
+  year={2017}
+}
+\end{verbatim}
+
+\subsubsection{sort :}
+\label{sec:orgc4c239b}
+\begin{verbatim}
+@inproceedings{Bewley2016_sort,
+  author={Bewley, Alex and Ge, Zongyuan and Ott, Lionel and Ramos, Fabio and Upcroft, Ben},
+  booktitle={2016 IEEE International Conference on Image Processing (ICIP)},
+  title={Simple online and realtime tracking},
+  year={2016},
+  pages={3464-3468},
+  keywords={Benchmark testing;Complexity theory;Detectors;Kalman filters;Target tracking;Visualization;Computer Vision;Data Association;Detection;Multiple Object Tracking},
+  doi={10.1109/ICIP.2016.7533003}
+}
+\end{verbatim}
+
+EOF
+\end{document}

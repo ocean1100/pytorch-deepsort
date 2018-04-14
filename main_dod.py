@@ -42,7 +42,7 @@ while(save.camera.isOpened()):
         continue
     save.verify()
     bboxes = Detection.Detection(frame) #Saida [x,y,x2,y2,confidence, _,_]
-    new_bboxes = Tracking.track(bboxes,frame)#Saida [x,y,x2,y2,confidence, _,_]
+    new_bboxes = Tracking.track(bboxes,frame)#Saida [id_num,x,y,x2,y2,confidence, _,_]
     for bbox in new_bboxes:
         cv2.rectangle(frame, (bbox[1], bbox[2]), (bbox[3], bbox[4]), (0,255,0), thick//3)
         cv2.putText(frame,bbox[0] ,((bbox[1]), (bbox[2]) - 12),0, 1e-3 * h, (0,255,0),thick//6)
